@@ -1,1 +1,1 @@
-# resource-preloader
+# res-preloader

@@ -1,0 +1,23 @@
+{
+  "name": "res-preloader",
+  "version": "1.0.0",
+  "description": "resource preloader",
+  "main": "res-preloader.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TomasRan/res-preloader.git"
+  },
+  "keywords": [
+    "resource",
+    "preloader"
+  ],
+  "author": "tomasran",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TomasRan/res-preloader/issues"
+  },
+  "homepage": "https://github.com/TomasRan/res-preloader#readme"
+}

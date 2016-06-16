@@ -1,0 +1,1 @@
+!function(e,n){"use strict";"function"==typeof define&&define.amd?define(["jquery"],function(){return n()}):void 0!==typeof module&&module.exports?module.exports=n():e.resPreloader=n()}(window||{},function(){var e=function(){},n=function(n){e({resArr:[],callback:function(){}},n)};return n});
