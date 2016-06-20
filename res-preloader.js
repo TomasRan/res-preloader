@@ -15,7 +15,7 @@
 	'use strict';
 
 	if (typeof define === 'function' && define.amd) {
-		define(['jquery'], function() {
+		define(function() {
 			return factory();
 		});
 	} else if (typeof module !== undefined && module.exports) {
@@ -25,15 +25,83 @@
 	}
 })(window || {}, function() {
 	var extend = function(src, dist) {
+		if (typeof dist !== 'object') {
+			return src;	
+		}
+
+		for (var prop in src) {
+			if (src.hasOwnProperty(prop)) {
+				if (dist[prop] && typeof dist[prop] === typeof src[prop]) {
+
+				} else {
+					dist[prop] = src[prop];
+				}
+			}
+		}
+
+		return dist;
 	};
 
 	var resPreloader = function(options) {
 		var opts = extend({
-			'resArr': [],
+			'resources': [],
 			'callback': function() {}
 		}, options);
-	};
 
+		var isIE = /*@cc_on!@*/0;
+
+		if (isIE) {
+			for (var i = 0; i < opts.resources.length; i++) {
+				(function(index) {
+					var img = new Image();
+
+					img.onload = function() {
+						img.src = null;
+						options.callback({
+							index: index,
+							url: opts.resources[index] 
+						}, null);
+					}
+
+					img.onerror = function(e) {
+						var ec = e || window.event;
+
+						options.callback({
+							index: index,
+							url: opts.resources[index] 
+						}, e);	
+					}
+
+					img.src = opts.resources[i];
+				})(i);
+			}
+		} else {
+			for (var i = 0; i < opts.resources.length; i++)	{
+				(function(index) {
+					var obj = document.createElement('object');
+
+					obj.onload = function() {
+						obj.data = null;	
+						options.callback({
+							index: index,
+							url: opts.resources[index]	
+						}, null);
+					}
+
+					obj.onerror = function(e) {
+						var ec = e || window.event;
+
+						options.callback({
+							index: index,
+							url: opts.resources[index]	
+						}, e);
+					}
+
+					obj.data = opts.resources[i];
+				})(i);
+			}
+		}
+	};
 
 	return resPreloader;
 }));
