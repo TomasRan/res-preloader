@@ -18,7 +18,7 @@
 		define(function() {
 			return factory();
 		});
-	} else if (typeof module !== undefined && module.exports) {
+	} else if (typeof module != undefined && module.exports) {
 		module.exports = factory();
 	} else {
 		global.resPreloader = factory();
@@ -56,7 +56,7 @@
 					var img = new Image();
 
 					img.onload = function() {
-						img.src = null;
+						img.src = '';
 						options.callback({
 							index: index,
 							url: opts.resources[index] 
@@ -81,7 +81,8 @@
 					var obj = document.createElement('object');
 
 					obj.onload = function() {
-						obj.data = null;	
+						obj.data = '';	
+						document.body.removeChild(obj);
 						options.callback({
 							index: index,
 							url: opts.resources[index]	
@@ -91,6 +92,7 @@
 					obj.onerror = function(e) {
 						var ec = e || window.event;
 
+						document.body.removeChild(obj);
 						options.callback({
 							index: index,
 							url: opts.resources[index]	
