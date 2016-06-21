@@ -81,11 +81,11 @@
 					var obj = document.createElement('object');
 
 					obj.onload = function() {
-						obj.data = '';	
+						obj.data = '';
 						document.body.removeChild(obj);
 						options.callback({
 							index: index,
-							url: opts.resources[index]	
+							url: opts.resources[index]
 						}, null);
 					}
 
@@ -95,7 +95,7 @@
 						document.body.removeChild(obj);
 						options.callback({
 							index: index,
-							url: opts.resources[index]	
+							url: opts.resources[index]
 						}, e);
 					}
 
