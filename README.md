@@ -2,7 +2,12 @@
 
 ## install
 
-> npm install res-preloader
+```
+
+# use npm
+$ npm install res-preloader
+ 
+```
 
 ## usage
 
