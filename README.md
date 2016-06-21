@@ -1,5 +1,7 @@
 # res-preloader
 
+[![NPM](https://nodei.co/npm/res-preloader.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/res-preloader/)
+
 ## install
 
 ```

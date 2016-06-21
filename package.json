@@ -1,6 +1,6 @@
 {
   "name": "res-preloader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "resource preloader",
   "main": "res-preloader.js",
   "scripts": {
