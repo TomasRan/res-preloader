@@ -20,7 +20,7 @@
 		define(function() {
 			return factory();
 		});
-	} else if (typeof module != undefined && module.exports) {
+	} else if (typeof module !== 'undefined' && module.exports) {
 		module.exports = factory();
 	} else {
 		global.resPreloader = factory();
