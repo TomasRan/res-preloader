@@ -17,6 +17,8 @@ $ npm install res-preloader
 	var resPreloader = require('res-preloader');
 
 	resPreloader({
+		retryInterval: 1000,	// retry load interval (default is 0, millisecond) 
+		retryLimit: 3,			// retry limited times	(default is 0)
 		resources:[
 			'../images/xxx.jpg',
 			'../images/xxx.png',

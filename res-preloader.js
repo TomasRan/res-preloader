@@ -7,8 +7,8 @@
  *
  *		resPreloader({
  *			retryInterval: 1000,
- *			retryTime: 3,
- *			resArr: [],
+ *			retryLimit: 3,
+ *			resources: [],
  *			callback: function() {},
  *		});
  */
