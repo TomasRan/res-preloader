@@ -78,6 +78,8 @@
 			} else {
 				data.retryLimit--;
 				setTimeout(function() {
+					console.log('load error: ', data.src);
+					console.log('retry times: ', data.retryLimit);
 					preload(type, data, callback);	
 				}, data.retryInterval);
 			}
