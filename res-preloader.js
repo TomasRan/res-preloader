@@ -42,8 +42,22 @@
 		return dist;
 	};
 
-	var preload = function(target, data, callback) {
-		var self = this;
+	var preload = function(type, data, callback) {
+		var target = '';
+
+		if (type === 'img') {
+			target = new Image();	
+			target.src = data.src;
+		} else if (type === 'js') {
+			target = document.create('script');
+			target.src = data.src;
+			target.type = 'type/javascript';
+		} else if (type === 'css') {
+			target = document.create('link');
+			target.href = data.src;
+			target.type = 'type/css';
+			target.rel = 'stylesheet';
+		}
 
 		target.onload = function() {
 			delete target;
@@ -64,35 +78,10 @@
 			} else {
 				data.retryLimit--;
 				setTimeout(function() {
-					self.arguments.callee(target, data, callback);	
+					preload(type, data, callback);	
 				}, data.retryInterval);
 			}
 		};
-	};
-
-	// 图片资源预加载 
-	var imgPreload = function(data, callback) {
-		var img = new Image();
-
-		preload(img, data, callback);
-		img.src = data.src;
-	};
-
-	// js资源加载
-	var jsPreload = function(data, callback) {
-		var js = document.create('script');
-
-		js.src = data.src;
-		css.type = 'type/javascript';
-	};
-
-	// css资源加载
-	var cssPreload = function(data, callback) {
-		var css = document.create('link');
-
-		css.href = data.src;
-		css.type = 'type/css';
-		css.rel = 'stylesheet';
 	};
 
 	/*
@@ -158,30 +147,24 @@
 			'retryLimit': 0
 		}, options);
 
-		var handlerMap = {
-			'img': imgPreload,
-			'js': jsPreload,
-			'css': cssPreload
-		};
-
 		for (var i = 0; i < opts.resources.length; i++) {
-			var preloadHandler = handlerMap[getFileType(opts.resources[i])];
+			var type = getFileType(opts.resources[i]);
 
-			if (preloadHandler === undefined) {
+			if (!type) {
 				opts.callback({
 					'index': i,
 					'url': opts.resources[i]
 				}, 'invalid url');	
+			} else {
+				preload(type, {
+					'index': i,
+					'src': opts.resources[i],
+					'retryInterval': opts.retryInterval,
+					'retryLimit': opts.retryLimit	
+				}, function(data, e) {
+					opts.callback(data, e);	
+				});
 			}
-
-			preloadHandler({
-				'index': i,
-				'src': opts.resources[i],
-				'retryInterval': opts.retryInterval,
-				'retryLimit': opts.retryLimit	
-			}, function(data, e) {
-				opts.callback(data, e);	
-			});
 		}
 	};
 
