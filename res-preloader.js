@@ -1,6 +1,6 @@
 /*
  *	@author:		tomasran
- *	@description:	preload js,css,html,images
+ *	@description:	preload js,css,images
  *	@createDate:	2016-06-16 20:49
  *	@example:
  *		var resPreloader = require('res-preloader');
@@ -46,7 +46,7 @@
 		var self = this;
 
 		target.onload = function() {
-			target.src = '';
+			delete target;
 			callback({
 				index: data.index,
 				url: data.src	
@@ -64,7 +64,7 @@
 			} else {
 				data.retryLimit--;
 				setTimeout(function() {
-					self.arguments.callee;	
+					self.arguments.callee(target, data, callback);	
 				}, data.retryInterval);
 			}
 		};
@@ -75,34 +75,6 @@
 		var img = new Image();
 
 		preload(img, data, callback);
-		/*(function(img, d, cb) {
-			var self = this;
-
-			img.onload = function() {
-				img.src = '';
-				cb({
-					index: d.index,
-					url: d.src	
-				}, null);	
-			};
-
-			img.onerror = function(e) {
-				if (d.retryLimit < 1) {
-					var ec = e || window.event;
-
-					cb({
-						index: d.index,
-						url: d.src	
-					}, ec);
-				} else {
-					d.retryLimit--;
-					setTimeout(function() {
-						self.arguments.callee;	
-					}, d.retryInterval);
-				}
-			};
-		})(img, data, callback);*/
-
 		img.src = data.src;
 	};
 
@@ -197,9 +169,9 @@
 
 			if (preloadHandler === undefined) {
 				opts.callback({
-					'index': i;
+					'index': i,
 					'url': opts.resources[i]
-				}, new throw Error('invalid url'));	
+				}, 'invalid url');	
 			}
 
 			preloadHandler({
