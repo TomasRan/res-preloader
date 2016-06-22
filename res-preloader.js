@@ -33,7 +33,7 @@
 
 		for (var prop in src) {
 			if (src.hasOwnProperty(prop)) {
-				if (typeof dist[prop] === undefined) {
+				if (dist[prop] === undefined) {
 					dist[prop] = src[prop];
 				}
 			}
