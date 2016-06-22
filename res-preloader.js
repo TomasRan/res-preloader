@@ -6,6 +6,8 @@
  *		var resPreloader = require('res-preloader');
  *
  *		resPreloader({
+ *			retryInterval: 1000,
+ *			retryTime: 3,
  *			resArr: [],
  *			callback: function() {},
  *		});
@@ -31,9 +33,7 @@
 
 		for (var prop in src) {
 			if (src.hasOwnProperty(prop)) {
-				if (dist[prop] && typeof dist[prop] === typeof src[prop]) {
-
-				} else {
+				if (typeof dist[prop] === undefined) {
 					dist[prop] = src[prop];
 				}
 			}
@@ -42,66 +42,97 @@
 		return dist;
 	};
 
+	var iePreload = function(data, callback) {
+		var img = new Image();
+
+		(function(img, data, cb) {
+			var self = this;
+
+			img.onload = function() {
+				img.src = '';
+				cb({
+					index: data.index,
+					url: data.src	
+				}, null);	
+			};
+
+			img.onerror = function(e) {
+				if (data.retryLimit < 1) {
+					var ec = e || window.event;
+
+					callback({
+						index: data.index,
+						url: data.src	
+					}, ec);
+				} else {
+					data.retryLimit--;
+					setTimeout(function() {
+						self.arguments.callee;	
+					}, data.retryInterval);
+				}
+			};
+		})(img, data, callback);
+
+		img.src = data.src;
+	};
+
+	var otherPreload = function(data, callback) {
+		var obj = document.createElement('object');
+
+		(function(o, d, cb) {
+			o.onload = function() {
+				o.data = '';
+				document.body.removeChild(o);
+				cb({
+					index: d.index,
+					url: d.src 
+				}, null);
+			}
+
+			o.onerror = function(e) {
+				if (d.retryLimit < 1) {
+					var ec = e || window.event;
+
+					document.body.removeChild(o);
+					cb({
+						index: d.index,
+						url: d.src 
+					}, ec);
+				} else {
+					d.retryLimit--;
+					setTimeout(function() {
+						self.arguments.callee;	
+					}, d.retryInterval);
+				}
+			}
+		
+		})(obj, data, callback);
+
+		obj.width = 0;
+		obj.height = 0;
+		obj.data = data.src; 
+		document.body.appendChild(obj);
+	};
+
 	var resPreloader = function(options) {
 		var opts = extend({
 			'resources': [],
-			'callback': function() {}
+			'callback': function() {},
+			'retryInterval': 0,
+			'retryLimit': 0
 		}, options);
 
-		var isIE = /*@cc_on!@*/0;
+		var preloadHandler = /*@cc_on!@*/0 ? iePreload : otherPreload;
 
-		if (isIE) {
-			for (var i = 0; i < opts.resources.length; i++) {
-				(function(index) {
-					var img = new Image();
-
-					img.onload = function() {
-						img.src = '';
-						options.callback({
-							index: index,
-							url: opts.resources[index] 
-						}, null);
-					}
-
-					img.onerror = function(e) {
-						var ec = e || window.event;
-
-						options.callback({
-							index: index,
-							url: opts.resources[index] 
-						}, e);	
-					}
-
-					img.src = opts.resources[i];
-				})(i);
-			}
-		} else {
-			for (var i = 0; i < opts.resources.length; i++)	{
-				(function(index) {
-					var obj = document.createElement('object');
-
-					obj.onload = function() {
-						obj.data = '';
-						document.body.removeChild(obj);
-						options.callback({
-							index: index,
-							url: opts.resources[index]
-						}, null);
-					}
-
-					obj.onerror = function(e) {
-						var ec = e || window.event;
-
-						document.body.removeChild(obj);
-						options.callback({
-							index: index,
-							url: opts.resources[index]
-						}, e);
-					}
-
-					obj.data = opts.resources[i];
-				})(i);
-			}
+		for (var i = 0; i < opts.resources.length; i++) {
+			preloadHandler({
+				'index': i,
+				'src': opts.resources[i],
+				'retryInterval': opts.retryInterval,
+				'retryLimit': opts.retryLimit	
+			}, function(data, e) {
+				opts.callback(data, e);	
+			});
 		}
 	};
 
